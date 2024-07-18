@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Simulator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="shelves">
+        <div class="shelfcol" onclick="addToCart('Product 1 Rs 100')">
+            <img src="home.jpeg" alt="Product 1">
+            <div class="product-name">Product 1</div>
+            <div class="product-price">Rs 100</div>
+        </div>
+        <div class="shelfcol" onclick="addToCart('Product 2 Rs 40')">
+            <img src="player_2.jpeg" alt="Product 2">
+            <div class="product-name">Product 2</div>
+            <div class="product-price">Rs 40</div>
+        </div>
+        <div class="shelfcol" onclick="addToCart('Product 3 Rs 30')">
+            <img src="grass.jpg" alt="Product 3">
+            <div class="product-name">Product 3</div>
+            <div class="product-price">Rs 30</div>
+        </div>
+        <!-- Add more shelf items as needed -->
+    </div>
+
+    <div class="shopping-cart">
+        <img src="shoppingcart.png" alt="Shopping Cart">
+        <div id="cart-items"></div> <!-- Container for product images -->
+    </div>
+
+    <div class="cashier-screen" id="cashier-screen">
+        <p>Products bought</p>
+    </div>
+
+    <div class="table">
+        <img src="keyboard.jpeg" alt="">
+        <!-- Table's content will go here -->
+    </div>
+
+    <script>
+        let totalSum = 0;
+        let cart = {};  // Object to store product details
+
+        // Function to add product name to the cashier screen and image to the shopping cart
+        function addToCart(productInfo) {
+            const cashierScreen = document.getElementById('cashier-screen');
+            const cartItemsContainer = document.getElementById('cart-items');
+            
+            // Extract product name and price
+            const [productName, productPrice] = productInfo.split(' Rs ');
+            const price = parseFloat(productPrice);
+
+            // Check if the product is already in the cart
+            if (cart[productName]) {
+                cart[productName].quantity += 1;
+                cart[productName].totalPrice += price;
+            } else {
+                cart[productName] = {
+                    quantity: 1,
+                    totalPrice: price,
+                    imageSrc: getImageSrc(productInfo)  // Function to get image source
+                };
+            }
+
+            // Clear and update the shopping cart
+            cartItemsContainer.innerHTML = '';
+            for (let item in cart) {
+                const productImg = document.createElement('img');
+                productImg.classList.add('cart-item');
+                productImg.src = cart[item].imageSrc;
+                cartItemsContainer.appendChild(productImg);
+            }
+
+            // Clear and update the cashier screen
+            cashierScreen.innerHTML = '<p>Products bought</p>';
+            for (let item in cart) {
+                const productDiv = document.createElement('div');
+                productDiv.textContent = `${item} - Rs ${cart[item].totalPrice.toFixed(2)} (Quantity: ${cart[item].quantity})`;
+                productDiv.classList.add('product-name');
+                cashierScreen.appendChild(productDiv);
+            }
+
+            // Update the total sum
+            totalSum += price;
+            displayTotalSum();
+        }
+
+        // Function to get image source based on product info
+        function getImageSrc(productInfo) {
+            switch (productInfo) {
+                case 'Product 1 Rs 100':
+                    return 'home.jpeg';
+                case 'Product 2 Rs 40':
+                    return 'player_2.jpeg';
+                case 'Product 3 Rs 30':
+                    return 'grass.jpg';
+                default:
+                    return 'default.jpg';
+            }
+        }
+
+        // Function to display the total sum
+        function displayTotalSum() {
+            const cashierScreen = document.getElementById('cashier-screen');
+            let totalSumElement = document.getElementById('total-sum');
+
+            if (!totalSumElement) {
+                totalSumElement = document.createElement('p');
+                totalSumElement.id = 'total-sum';
+                cashierScreen.appendChild(totalSumElement);
+            }
+
+            totalSumElement.textContent = `Total: Rs ${totalSum.toFixed(2)}`;
+        }
+    </script>
+</body>
+</html>
